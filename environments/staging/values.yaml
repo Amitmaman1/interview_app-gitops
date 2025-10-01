@@ -1,0 +1,166 @@
+namespace: killer-app-staging
+backend:
+  name: backend-app
+  replicaCount: 2  # Medium replica count for staging
+
+  image:
+    repository: amitmaman1/my-backend
+    tag: latest
+    pullPolicy: IfNotPresent
+
+  service:
+    name: backend-service
+    type: ClusterIP
+    port: 5000
+    TargetPort: 5000
+
+  resources:
+    requests:
+      memory: "192Mi"  # Medium resources for staging
+      cpu: "150m"
+    limits:
+      memory: "768Mi"
+      cpu: "750m"
+
+frontend:
+  name: frontend-app
+  replicaCount: 2  # Medium replica count for staging
+
+  image:
+    repository: amitmaman1/my-frontend
+    tag: latest
+    pullPolicy: IfNotPresent
+
+  service:
+    name: frontend-service
+    type: ClusterIP
+    port: 80
+    targetPort: 80
+
+  resources:
+    requests:
+      memory: "96Mi"  # Medium resources for staging
+      cpu: "75m"
+    limits:
+      memory: "384Mi"
+      cpu: "300m"
+
+  volumeMounts:
+    - name: nginx-config
+      mountPath: /etc/nginx/conf.d/default.conf
+      subPath: nginx.conf
+
+  volumes:
+    - name: nginx-config
+      configMap:
+        name: nginx-config
+
+ingress:
+  enabled: true
+  name: killer-app-ingress
+  className: traefik
+  host: interview-app.staging.yourdomain.com  # Staging domain
+
+  paths:
+    - path: /
+      pathType: Prefix
+      backend:
+        service:
+          name: frontend-service
+          port: 80
+    - path: /api
+      pathType: Prefix
+      backend:
+        service:
+          name: backend-service
+          port: 5000
+
+configmap:
+  enabled: true
+  name: nginx-config
+  data:
+    nginx.conf: |
+      server {
+          listen 80;
+          server_name _;
+          root   /usr/share/nginx/html;
+          index  index.html;
+          location / {
+              try_files $uri $uri/ /index.html;
+          }
+          # Pretty URLs for top-level pages
+          location = /login {
+              try_files /login.html =404;
+          }
+          location = /login/ {
+              try_files /login.html =404;
+          }
+          location = /sessions {
+              try_files /sessions/index.html =404;
+          }
+          location = /sessions/ {
+              try_files /sessions/index.html =404;
+          }
+          location = /profile {
+              try_files /profile/index.html =404;
+          }
+          location = /profile/ {
+              try_files /profile/index.html =404;
+          }
+
+          location /api/ {
+              proxy_pass http://backend-service.{{ .Values.namespace }}.svc.cluster.local:5000;
+              proxy_set_header Host $host;
+              proxy_set_header X-Real-IP $remote_addr;
+              proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+              proxy_set_header X-Forwarded-Proto $scheme;
+          }
+      }
+
+# Secret Store configuration
+secretStore:
+  enabled: true
+  name: aws-secretstore
+  namespace: killer-app-staging
+  provider:
+    aws:
+      service: SecretsManager
+      region: us-east-1
+      auth:
+        secretRef:
+          accessKeyIDSecretRef:
+            name: aws-credentials
+            key: access-key-id
+          secretAccessKeySecretRef:
+            name: aws-credentials
+            key: secret-access-key
+
+# External Secret configuration
+externalSecret:
+  enabled: true
+  name: killer-app-secrets-helm
+  namespace: killer-app-staging
+  refreshInterval: 1h
+  secretStoreRef:
+    name: aws-secretstore
+    kind: SecretStore
+  target:
+    name: killer-app-secret
+    creationPolicy: Owner
+  data:
+    - secretKey: SUPABASE_URL
+      remoteRef:
+        key: my-api-keys-staging  # Staging secrets key
+        property: SUPABASE_URL
+    - secretKey: SUPABASE_KEY
+      remoteRef:
+        key: my-api-keys-staging
+        property: SUPABASE_KEY
+    - secretKey: SUPABASE_ANON_KEY
+      remoteRef:
+        key: my-api-keys-staging
+        property: SUPABASE_ANON_KEY
+    - secretKey: GROQ_API_KEY
+      remoteRef:
+        key: my-api-keys-staging
+        property: GROQ_API_KEY
