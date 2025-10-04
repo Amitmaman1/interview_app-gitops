@@ -117,11 +117,10 @@ configmap:
           }
       }
 
-# Secret Store configuration
 secretStore:
   enabled: true
   name: aws-secretstore
-  namespace: killer-app-prod
+  namespace: killer-app-prod  # Change this to match your app namespace
   provider:
     aws:
       service: SecretsManager
@@ -150,17 +149,17 @@ externalSecret:
   data:
     - secretKey: SUPABASE_URL
       remoteRef:
-        key: my-api-keys-prod  # Production secrets key
+        key: my-api-keys
         property: SUPABASE_URL
     - secretKey: SUPABASE_KEY
       remoteRef:
-        key: my-api-keys-prod
+        key: my-api-keys
         property: SUPABASE_KEY
     - secretKey: SUPABASE_ANON_KEY
       remoteRef:
-        key: my-api-keys-prod
+        key: my-api-keys
         property: SUPABASE_ANON_KEY
     - secretKey: GROQ_API_KEY
       remoteRef:
-        key: my-api-keys-prod
+        key: my-api-keys
         property: GROQ_API_KEY

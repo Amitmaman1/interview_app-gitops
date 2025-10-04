@@ -139,7 +139,7 @@ secretStore:
 externalSecret:
   enabled: true
   name: killer-app-secrets-helm
-  namespace: killer-app-staging
+  namespace: killer-app-staging 
   refreshInterval: 1h
   secretStoreRef:
     name: aws-secretstore
@@ -150,17 +150,17 @@ externalSecret:
   data:
     - secretKey: SUPABASE_URL
       remoteRef:
-        key: my-api-keys-staging  # Staging secrets key
+        key: my-api-keys
         property: SUPABASE_URL
     - secretKey: SUPABASE_KEY
       remoteRef:
-        key: my-api-keys-staging
+        key: my-api-keys
         property: SUPABASE_KEY
     - secretKey: SUPABASE_ANON_KEY
       remoteRef:
-        key: my-api-keys-staging
+        key: my-api-keys
         property: SUPABASE_ANON_KEY
     - secretKey: GROQ_API_KEY
       remoteRef:
-        key: my-api-keys-staging
+        key: my-api-keys
         property: GROQ_API_KEY

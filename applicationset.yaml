@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: my-killer-app
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - env: dev
+            namespace: killer-app-dev
+          - env: staging
+            namespace: killer-app-staging
+          - env: prod
+            namespace: killer-app-prod
+  template:
+    metadata:
+      name: killer-app-{{env}}
+    spec:
+      project: default
+      sources:
+        - repoURL: https://github.com/Amitmaman1/interview_app.git
+          targetRevision: dev
+          path: interview-chart
+          helm:
+            valueFiles:
+              - $values/environments/{{env}}/values.yaml
+        - repoURL: https://github.com/Amitmaman1/interview_app-gitops.git
+          targetRevision: master
+          ref: values
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{namespace}}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
