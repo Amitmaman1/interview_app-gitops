@@ -1,7 +1,7 @@
 namespace: killer-app-dev
 backend:
   name: backend-app
-  replicaCount: 5
+  replicaCount: 1
 
   image:
     repository: amitmaman1/my-backend
