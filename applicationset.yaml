@@ -9,10 +9,10 @@ spec:
         elements:
           - env: dev
             namespace: killer-app-dev
-          - env: staging
-            namespace: killer-app-staging
-          - env: prod
-            namespace: killer-app-prod
+          # - env: staging
+          #   namespace: killer-app-staging
+          # - env: prod
+          #   namespace: killer-app-prod
   template:
     metadata:
       name: killer-app-{{env}}
