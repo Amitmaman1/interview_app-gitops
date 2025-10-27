@@ -5,9 +5,9 @@ backend:
   replicaCount: 1
 
   image:
-    repository: amitmaman1/my-backend
-    tag: latest
-    pullPolicy: IfNotPresent
+    repository: 692859952726.dkr.ecr.us-east-1.amazonaws.com/my_app
+    tag: backend-latest
+    pullPolicy: Always
 
   service:
     name: backend-service
@@ -28,9 +28,9 @@ frontend:
   replicaCount: 1
 
   image:
-    repository: amitmaman1/my-frontend
-    tag: latest
-    pullPolicy: IfNotPresent
+    repository: 692859952726.dkr.ecr.us-east-1.amazonaws.com/my_app
+    tag: frontend-latest
+    pullPolicy: Always
 
   service:
     name: frontend-service
