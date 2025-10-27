@@ -121,26 +121,22 @@ configmap:
 secretStore:
   enabled: true
   name: aws-secretstore
-  namespace: killer-app-dev  # Change this to match your app namespace
+  namespace: killer-app-dev  
   provider:
     aws:
       service: SecretsManager
       region: us-east-1
       auth:
-        secretRef:
-          accessKeyIDSecretRef:
-            name: aws-credentials
-            key: access-key-id
-          secretAccessKeySecretRef:
-            name: aws-credentials
-            key: secret-access-key
-
+        jwt: {}  
+# -----------------------------
 # External Secret configuration
+# -----------------------------
 externalSecret:
   enabled: true
   name: killer-app-secrets-helm
   namespace: killer-app-dev 
   refreshInterval: 1h
+  serviceAccountName: killer-app-sa  # חייב להתאים ל-SA עם IRSA
   secretStoreRef:
     name: aws-secretstore
     kind: SecretStore
