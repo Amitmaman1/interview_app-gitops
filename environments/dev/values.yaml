@@ -6,7 +6,7 @@ backend:
 
   image:
     repository: 692859952726.dkr.ecr.us-east-1.amazonaws.com/my_app
-    tag: backend-latest
+    tag: backend-85e2bc5
     pullPolicy: Always
 
   service:
@@ -29,7 +29,7 @@ frontend:
 
   image:
     repository: 692859952726.dkr.ecr.us-east-1.amazonaws.com/my_app
-    tag: frontend-latest
+    tag: frontend-85e2bc5
     pullPolicy: Always
 
   service:
