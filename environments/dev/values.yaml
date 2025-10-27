@@ -59,7 +59,11 @@ frontend:
 ingress:
   enabled: true
   name: killer-app-ingress
-  className: traefik
+  className: alb
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
   host: interview-app.local
 
   paths:
