@@ -1,4 +1,5 @@
 namespace: killer-app-dev
+serviceAccountName: killer-app-sa
 backend:
   name: backend-app
   replicaCount: 1
