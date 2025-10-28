@@ -1,4 +1,10 @@
 namespace: killer-app-prod
+
+serviceAccount:
+  create: true
+  name: killer-app-sa
+  annotations: {}
+
 backend:
   name: backend-app
   replicaCount: 3  # Higher replica count for production
@@ -140,6 +146,7 @@ externalSecret:
   name: killer-app-secrets-helm
   namespace: killer-app-prod
   refreshInterval: 1h
+  serviceAccountName: killer-app-sa
   secretStoreRef:
     name: aws-secretstore
     kind: SecretStore

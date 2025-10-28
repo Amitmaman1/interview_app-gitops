@@ -1,5 +1,5 @@
 namespace: killer-app-dev
-serviceAccountName: killer-app-sa
+
 backend:
   name: backend-app
   replicaCount: 1
@@ -128,13 +128,10 @@ configmap:
 secretStore:
   enabled: true
   name: aws-secretstore
-  namespace: killer-app-dev  
   provider:
     aws:
       service: SecretsManager
-      region: us-east-1
-      auth:
-        jwt: {}  
+      region: us-east-1  
 # -----------------------------
 # External Secret configuration
 # -----------------------------
@@ -143,10 +140,8 @@ externalSecret:
   name: killer-app-secrets-helm
   namespace: killer-app-dev 
   refreshInterval: 1h
-  serviceAccountName: killer-app-sa  # חייב להתאים ל-SA עם IRSA
   secretStoreRef:
     name: aws-secretstore
-    kind: SecretStore
   target:
     name: killer-app-secret
     creationPolicy: Owner
