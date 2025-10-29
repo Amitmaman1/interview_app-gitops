@@ -34,7 +34,7 @@ frontend:
 
   service:
     name: frontend-service
-    type: LoadBalancer
+    type: ClusterIP
     port: 80
     targetPort: 80
 
@@ -67,6 +67,9 @@ ingress:
     alb.ingress.kubernetes.io/ssl-redirect: '443'
     alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:692859952726:certificate/24bfd1d3-4686-4fa2-9e58-ea783ef769d4
   host: devopsinterviewer.online
+  tls:
+    - hosts:
+        - devopsinterviewer.online
 
   paths:
     - path: /
