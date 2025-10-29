@@ -34,7 +34,7 @@ frontend:
 
   service:
     name: frontend-service
-    type: ClusterIP
+    type: LoadBalancer
     port: 80
     targetPort: 80
 
