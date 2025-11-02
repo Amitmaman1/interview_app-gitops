@@ -142,7 +142,7 @@ externalSecret:
   enabled: true
   name: killer-app-secrets-helm
   namespace: killer-app-dev 
-  refreshInterval: 1h
+  refreshInterval: 1h0m0s
   secretStoreRef:
     name: aws-secretstore
   target:
