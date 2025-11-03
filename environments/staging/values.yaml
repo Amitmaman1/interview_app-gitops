@@ -1,12 +1,12 @@
 namespace: killer-app-staging
+
 backend:
   name: backend-app
-  replicaCount: 2  # Medium replica count for staging
-
+  replicaCount: 2 
   image:
-    repository: amitmaman1/my-backend
-    tag: latest
-    pullPolicy: IfNotPresent
+    repository: 692859952726.dkr.ecr.us-east-1.amazonaws.com/my_app
+    tag: backend-85e2bc5f
+    pullPolicy: Always
 
   service:
     name: backend-service
@@ -16,7 +16,7 @@ backend:
 
   resources:
     requests:
-      memory: "192Mi"  # Medium resources for staging
+      memory: "192Mi"  
       cpu: "150m"
     limits:
       memory: "768Mi"
@@ -24,12 +24,12 @@ backend:
 
 frontend:
   name: frontend-app
-  replicaCount: 2  # Medium replica count for staging
+  replicaCount: 2  
 
   image:
-    repository: amitmaman1/my-frontend
-    tag: latest
-    pullPolicy: IfNotPresent
+    repository: 692859952726.dkr.ecr.us-east-1.amazonaws.com/my_app
+    tag: frontend-85e2bc5f
+    pullPolicy: Always
 
   service:
     name: frontend-service
@@ -39,7 +39,7 @@ frontend:
 
   resources:
     requests:
-      memory: "96Mi"  # Medium resources for staging
+      memory: "96Mi"  
       cpu: "75m"
     limits:
       memory: "384Mi"
@@ -58,8 +58,17 @@ frontend:
 ingress:
   enabled: true
   name: killer-app-ingress
-  className: traefik
-  host: interview-app.staging.yourdomain.com  # Staging domain
+  className: alb
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/ssl-redirect: '443'
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:692859952726:certificate/24bfd1d3-4686-4fa2-9e58-ea783ef769d4
+  host: staging.devopsinterviewer.online
+  tls:
+    - hosts:
+        - staging.devopsinterviewer.online
 
   paths:
     - path: /
@@ -121,29 +130,20 @@ configmap:
 secretStore:
   enabled: true
   name: aws-secretstore
-  namespace: killer-app-staging
   provider:
     aws:
       service: SecretsManager
-      region: us-east-1
-      auth:
-        secretRef:
-          accessKeyIDSecretRef:
-            name: aws-credentials
-            key: access-key-id
-          secretAccessKeySecretRef:
-            name: aws-credentials
-            key: secret-access-key
-
+      region: us-east-1  
+# -----------------------------
 # External Secret configuration
+# -----------------------------
 externalSecret:
   enabled: true
   name: killer-app-secrets-helm
   namespace: killer-app-staging 
-  refreshInterval: 1h
+  refreshInterval: 1h0m0s
   secretStoreRef:
     name: aws-secretstore
-    kind: SecretStore
   target:
     name: killer-app-secret
     creationPolicy: Owner
